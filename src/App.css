@@ -136,6 +136,19 @@ button[type='reset']:hover {
   background-color: #343a40;
 }
 
+.hidden {
+  height: '1px';
+  width: '1px';
+  margin: '-1px';
+  padding: 0;
+  border: 0;
+  outline: 0;
+  overflow: 'hidden';
+  position: 'absolute';
+  appearance: 'none';
+  clip: 'rect(0 0 0 0)';
+}
+
 /* Responsive Styles */
 @media (max-width: 600px) {
   h1,
