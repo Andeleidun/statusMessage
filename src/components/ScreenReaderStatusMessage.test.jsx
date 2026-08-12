@@ -1,5 +1,5 @@
-import React from 'react';
 import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ScreenReaderStatusMessage } from './ScreenReaderStatusMessage';
 
 describe('ScreenReaderStatusMessage', () => {
@@ -10,21 +10,19 @@ describe('ScreenReaderStatusMessage', () => {
     callbacks = new Map();
     nextFrameId = 1;
 
-    jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((callback) => {
-        const frameId = nextFrameId;
-        nextFrameId += 1;
-        callbacks.set(frameId, callback);
-        return frameId;
-      });
-    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((frameId) => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      const frameId = nextFrameId;
+      nextFrameId += 1;
+      callbacks.set(frameId, callback);
+      return frameId;
+    });
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((frameId) => {
       callbacks.delete(frameId);
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   function flushNextFrame() {

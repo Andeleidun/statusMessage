@@ -33,14 +33,15 @@ events.
 
 Prerequisites:
 
-- A current Node.js LTS release with npm.
+- Node.js 20.19 or later in the 20.x line, Node.js 22.13 or later in the
+  22.x line, or Node.js 24 or later, with npm.
 - A browser with `requestAnimationFrame` and `cancelAnimationFrame`.
 
 From this directory:
 
 ```sh
 npm ci
-npm start
+npm run dev
 ```
 
 Open the local URL printed by the development server. Use **Add item** and
@@ -49,9 +50,10 @@ the off-screen status message update.
 
 ## Verify the example
 
-Run the behavior tests once:
+Run static analysis and the behavior tests once:
 
 ```sh
+npm run lint
 npm run test:ci
 ```
 
@@ -60,6 +62,8 @@ Create the production bundle:
 ```sh
 npm run build
 ```
+
+Run `npm run preview` to inspect the generated `dist` directory locally.
 
 The tests verify that the empty status container exists first, new content is
 deferred, repeated text can be replayed, pending callbacks are canceled, and
@@ -74,17 +78,11 @@ Record the exact browser, assistive technology, versions, and observed result.
 
 ## Dependency security status
 
-On 2026-08-11, a non-forced `npm audit fix` reduced this repository's
-`npm audit --omit=dev` result from 64 findings to 28: 9 low, 5 moderate,
-and 14 high. A second safe remediation pass made no further change. The
-remaining chains are owned by Create React App's build, test, asset, and
-development-server dependencies. npm's forced proposal would install the
-invalid `react-scripts@0.0.0` package and was not applied.
-
-Treat the remaining findings and the unmaintained toolchain as a production
-release blocker. Run the development server only against trusted local source,
-do not expose it to an untrusted network, and migrate the example before using
-its toolchain for production delivery. Re-audit the migrated exact lockfile.
+On 2026-08-11, the exact Vite 8.2.1 and Vitest 4.1.10 dependency closure
+reported zero known vulnerabilities through npm audit. This replaces the
+retired Create React App dependency tree that previously reported 28 findings.
+Re-run the audit whenever the lockfile changes because registry advisories and
+the resolved closure can change.
 
 ## Failure and recovery
 
@@ -94,7 +92,7 @@ the region without scheduling work.
 
 If installation fails, remove the generated `node_modules` directory and run
 `npm ci` again with the committed lockfile. If a production build is stale,
-remove the generated `build` directory and rerun `npm run build`. Reloading the
+remove the generated `dist` directory and rerun `npm run build`. Reloading the
 page resets the in-memory cart.
 
 Stop the development server with `Ctrl+C`. The example creates no account,
@@ -109,9 +107,12 @@ remote data, persistent browser storage, or background service.
   system and supported browsers.
 - Product copy, message deduplication, rapid-update policy, localization, and
   assistive-technology support must be verified in the real workflow.
-- This repository preserves its React 18 and Create React App 5 teaching
-  checkpoint. Create React App is deprecated. Treat migration to an actively
-  maintained framework or build tool as a separate compatibility change.
+- Git history preserves the earlier React 18 and Create React App 5 checkpoint.
+  The current checkpoint uses Vite 8.2.1 and Vitest 4.1.10 while keeping the
+  application behavior and React version stable.
+- Vite 8 targets its current modern browser baseline by default. Confirm the
+  production browser support policy before delivery and add a reviewed legacy
+  build strategy only when the intended audience requires it.
 
 ## Sources
 
@@ -120,6 +121,8 @@ remote data, persistent browser storage, or background service.
 - [MDN: `requestAnimationFrame`](https://developer.mozilla.org/docs/Web/API/Window/requestAnimationFrame)
 - [MDN: `cancelAnimationFrame`](https://developer.mozilla.org/docs/Web/API/Window/cancelAnimationFrame)
 - [React: Sunsetting Create React App](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)
+- [Vite: Getting Started](https://vite.dev/guide/)
+- [Vitest: Getting Started](https://vitest.dev/guide/)
 
 ## License
 

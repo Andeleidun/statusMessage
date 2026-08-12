@@ -1,16 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import App from './App';
 
 beforeEach(() => {
-  jest.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
     callback(16);
     return 1;
   });
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test('updates and resets the visible cart without moving focus', async () => {

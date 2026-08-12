@@ -7,8 +7,10 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
+# Generated output
 build/
+dist/
+coverage/
 
 # Dependency directories
 node_modules/

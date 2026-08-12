@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const ScreenReaderStatusMessage = ({ message, sequence = 0 }) => {
-  const [announcedMessage, setAnnouncedMessage] = useState(null);
+  const [announcement, setAnnouncement] = useState(null);
+  const announcedMessage =
+    announcement?.message === message && announcement.sequence === sequence
+      ? announcement.message
+      : '';
 
   useEffect(() => {
-    setAnnouncedMessage(null);
-
     if (!message) {
       return undefined;
     }
 
     const frameId = window.requestAnimationFrame(() => {
-      setAnnouncedMessage(() => message);
+      setAnnouncement({ message, sequence });
     });
 
     return () => window.cancelAnimationFrame(frameId);
