@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
-// Utility to ensure applications can meet WCAG 2.1 AA SC 4.1.3 Status Messages
-// Which can be found at: https://www.w3.org/WAI/WCAG21/Understanding/status-messages
-export const ScreenReaderStatusMessage = ({ message }) => {
-  const [showMessage, setShowMessage] = useState(false);
+export const ScreenReaderStatusMessage = ({ message, sequence = 0 }) => {
+  const [announcedMessage, setAnnouncedMessage] = useState(null);
 
   useEffect(() => {
-    if (!showMessage && message) {
-      requestAnimationFrame(() => setShowMessage(true));
+    setAnnouncedMessage(null);
+
+    if (!message) {
+      return undefined;
     }
-  }, [message, showMessage]);
+
+    const frameId = window.requestAnimationFrame(() => {
+      setAnnouncedMessage(() => message);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [message, sequence]);
+
   return (
-    <span role="status" className="hidden">
-      {showMessage && message}
+    <span role="status" aria-atomic="true" className="visually-hidden">
+      {announcedMessage}
     </span>
   );
 };

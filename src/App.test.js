@@ -1,8 +1,28 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from './App';
 
-test('renders Tutorial title', () => {
+beforeEach(() => {
+  jest.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+    callback(16);
+    return 1;
+  });
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+test('updates and resets the visible cart without moving focus', async () => {
+  const user = userEvent.setup();
   render(<App />);
-  const linkElement = screen.getByText(/Tutorial/i);
-  expect(linkElement).toBeInTheDocument();
+
+  const addButton = screen.getByRole('button', { name: 'Add item' });
+  await user.click(addButton);
+
+  expect(screen.getByText('1', { selector: 'strong' })).toBeInTheDocument();
+  expect(addButton).toHaveFocus();
+
+  await user.click(screen.getByRole('button', { name: 'Reset cart' }));
+  expect(screen.getByText('0', { selector: 'strong' })).toBeInTheDocument();
 });

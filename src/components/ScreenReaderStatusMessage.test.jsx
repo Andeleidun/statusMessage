@@ -1,46 +1,89 @@
-import { ScreenReaderStatusMessage } from './ScreenReaderStatusMessage';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import { ScreenReaderStatusMessage } from './ScreenReaderStatusMessage';
 
-// These tests are designed to test against the three tests of
-// WCAG Technique ARIA22, found here: https://www.w3.org/WAI/WCAG21/Techniques/aria/ARIA22.html
 describe('ScreenReaderStatusMessage', () => {
-  let message;
+  let callbacks;
+  let nextFrameId;
 
-  const testRender = ({ message }) => {
-    return render(<ScreenReaderStatusMessage message={message} />);
-  };
+  beforeEach(() => {
+    callbacks = new Map();
+    nextFrameId = 1;
 
-  // 1. Check that the container destined to hold the status message has
-  // a role attribute with a value of status before the status message occurs.
-  it('should render empty with undefined message', () => {
-    testRender({ message });
-    const status = screen.queryByRole('status');
-    expect(status).toHaveTextContent('');
+    jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        const frameId = nextFrameId;
+        nextFrameId += 1;
+        callbacks.set(frameId, callback);
+        return frameId;
+      });
+    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((frameId) => {
+      callbacks.delete(frameId);
+    });
   });
 
-  // 2. Check that when the status message is triggered, it is inside the container.
-  it('should render passed string status message', () => {
-    message = 'status message';
-    testRender({ message });
-    const status = screen.queryByRole('status');
-    expect(status).toHaveTextContent('status message');
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  // Check that elements or attributes that provide information equivalent to
-  // the visual experience for the status message (such as a shopping cart image
-  // with proper alt text) also reside in the container.
-  it('should render passed JSX status message', () => {
-    const number = 7;
-    const labelCart = 'items in shopping';
-    message = (
-      <div>
-        {number} {labelCart} <img alt="cart" />
-      </div>
+  function flushNextFrame() {
+    const next = callbacks.entries().next().value;
+
+    if (!next) {
+      throw new Error('No animation frame is queued.');
+    }
+
+    const [frameId, callback] = next;
+    callbacks.delete(frameId);
+    act(() => callback(16));
+  }
+
+  test('renders an empty atomic status region before a message exists', () => {
+    render(<ScreenReaderStatusMessage message="" />);
+
+    const status = screen.getByRole('status');
+    expect(status).toHaveAttribute('aria-atomic', 'true');
+    expect(status).toBeEmptyDOMElement();
+    expect(window.requestAnimationFrame).not.toHaveBeenCalled();
+  });
+
+  test('defers new content until the existing region can observe the update', () => {
+    const { rerender } = render(<ScreenReaderStatusMessage message="" />);
+
+    rerender(
+      <ScreenReaderStatusMessage message="Cart updated." sequence={1} />
     );
-    testRender({ message });
-    const status = screen.queryByRole('status');
-    expect(status).toHaveTextContent(`7 ${labelCart}`);
-    expect(screen.getByAltText('cart')).toBeTruthy();
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+
+    flushNextFrame();
+    expect(screen.getByRole('status')).toHaveTextContent('Cart updated.');
+  });
+
+  test('can replay identical text when its sequence changes', () => {
+    const { rerender } = render(
+      <ScreenReaderStatusMessage message="Cart is empty." sequence={1} />
+    );
+    flushNextFrame();
+
+    rerender(
+      <ScreenReaderStatusMessage message="Cart is empty." sequence={2} />
+    );
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    flushNextFrame();
+
+    expect(screen.getByRole('status')).toHaveTextContent('Cart is empty.');
+    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(2);
+  });
+
+  test('cancels a pending update during cleanup', () => {
+    const { unmount } = render(
+      <ScreenReaderStatusMessage message="Pending update" sequence={1} />
+    );
+
+    unmount();
+
+    expect(window.cancelAnimationFrame).toHaveBeenCalledWith(1);
+    expect(callbacks.size).toBe(0);
   });
 });
