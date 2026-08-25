@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: 'demo-dist',
+  },
   test: {
     environment: 'jsdom',
     globals: true,
