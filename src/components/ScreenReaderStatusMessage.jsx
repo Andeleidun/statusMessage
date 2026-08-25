@@ -1,5 +1,17 @@
 import { useEffect, useState } from 'react';
 
+const visuallyHiddenStyle = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+};
+
 export const ScreenReaderStatusMessage = ({ message, sequence = 0 }) => {
   const [announcement, setAnnouncement] = useState(null);
   const announcedMessage =
@@ -20,7 +32,7 @@ export const ScreenReaderStatusMessage = ({ message, sequence = 0 }) => {
   }, [message, sequence]);
 
   return (
-    <span role="status" aria-atomic="true" className="visually-hidden">
+    <span role="status" aria-atomic="true" style={visuallyHiddenStyle}>
       {announcedMessage}
     </span>
   );
