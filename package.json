@@ -1,20 +1,57 @@
 {
   "name": "status-message",
   "version": "0.1.0",
+  "description": "A focused React utility for announcing non-focus-moving status updates to assistive technology.",
   "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src/index.d.ts",
+    "README.md",
+    "RELEASE.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andeleidun/statusMessage.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "accessibility",
+    "a11y",
+    "screen-reader",
+    "aria-live",
+    "status-message",
+    "wcag"
+  ],
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:lib && npm run build:demo",
+    "build:lib": "vite build --config vite.lib.config.js",
+    "build:demo": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md package.json",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md package.json",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js vite.lib.config.js README.md RELEASE.md package.json .github/workflows/ci.yml",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js vite.lib.config.js README.md RELEASE.md package.json .github/workflows/ci.yml",
     "test": "vitest",
-    "test:ci": "vitest run"
+    "test:ci": "vitest run",
+    "pack:check": "npm pack --dry-run",
+    "verify": "npm run format:check && npm run lint && npm run test:ci && npm run build && npm run pack:check"
   },
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
