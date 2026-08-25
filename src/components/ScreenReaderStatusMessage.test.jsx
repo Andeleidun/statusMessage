@@ -37,11 +37,18 @@ describe('ScreenReaderStatusMessage', () => {
     act(() => callback(16));
   }
 
-  test('renders an empty atomic status region before a message exists', () => {
+  test('renders a self-contained empty atomic status region before a message exists', () => {
     render(<ScreenReaderStatusMessage message="" />);
 
     const status = screen.getByRole('status');
     expect(status).toHaveAttribute('aria-atomic', 'true');
+    expect(status).toHaveStyle({
+      position: 'absolute',
+      width: '1px',
+      height: '1px',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+    });
     expect(status).toBeEmptyDOMElement();
     expect(window.requestAnimationFrame).not.toHaveBeenCalled();
   });
@@ -72,6 +79,38 @@ describe('ScreenReaderStatusMessage', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('Cart is empty.');
     expect(window.requestAnimationFrame).toHaveBeenCalledTimes(2);
+  });
+
+  test('clears an announced message immediately when message becomes empty', () => {
+    const { rerender } = render(
+      <ScreenReaderStatusMessage message="Saved." sequence={1} />
+    );
+    flushNextFrame();
+    expect(screen.getByRole('status')).toHaveTextContent('Saved.');
+
+    rerender(<ScreenReaderStatusMessage message="" sequence={1} />);
+
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(callbacks.size).toBe(0);
+  });
+
+  test('cancels stale rapid updates so only the newest message is eligible', () => {
+    const { rerender } = render(
+      <ScreenReaderStatusMessage message="First update" sequence={1} />
+    );
+    expect(callbacks.has(1)).toBe(true);
+
+    rerender(
+      <ScreenReaderStatusMessage message="Second update" sequence={2} />
+    );
+
+    expect(window.cancelAnimationFrame).toHaveBeenCalledWith(1);
+    expect(callbacks.has(1)).toBe(false);
+    expect(callbacks.size).toBe(1);
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+
+    flushNextFrame();
+    expect(screen.getByRole('status')).toHaveTextContent('Second update');
   });
 
   test('cancels a pending update during cleanup', () => {
