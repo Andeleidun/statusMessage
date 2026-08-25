@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScreenReaderStatusMessage } from './components/ScreenReaderStatusMessage';
+import { ScreenReaderStatusMessage } from './index';
 import './App.css';
 
 function App() {
