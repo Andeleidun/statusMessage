@@ -10,6 +10,7 @@ lerna-debug.log*
 # Generated output
 build/
 dist/
+demo-dist/
 coverage/
 
 # Dependency directories
