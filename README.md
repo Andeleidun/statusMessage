@@ -33,10 +33,10 @@ The repository is structured as a distributable library, but registry publicatio
 
 ### Props
 
-| Prop | Type | Required | Purpose |
-| --- | --- | --- | --- |
-| `message` | `string` | yes | Status text to expose. Pass an empty string to clear the region. |
-| `sequence` | `number` | no | Distinguishes separate events that intentionally reuse identical text. Defaults to `0`. |
+| Prop       | Type     | Required | Purpose                                                                                    |
+| ---------- | -------- | -------- | ------------------------------------------------------------------------------------------ |
+| `message`  | `string` | yes      | Status text to expose. Pass an empty string to clear the region.                           |
+| `sequence` | `number` | no       | Distinguishes separate events that intentionally reuse identical text. Defaults to `0`.    |
 
 TypeScript declarations are included with the package boundary even though the implementation remains intentionally small JavaScript.
 
