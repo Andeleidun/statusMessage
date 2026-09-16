@@ -1,8 +1,9 @@
 # React status-message example
 
-This example keeps a polite live region in the document before a status update,
-then announces cart changes without moving keyboard focus. It also demonstrates
-how to cancel a pending animation-frame callback and how to replay identical
+This example accompanies the [full tutorial](article/tutorial.md). Together,
+they keep a polite live region in the document before a status update and make
+cart changes eligible for announcement without moving keyboard focus. The
+example also cancels pending animation-frame callbacks and replays identical
 status text for separate user actions.
 
 ## Audience and outcome
@@ -48,19 +49,13 @@ Open the local URL printed by the development server. Use **Add item** and
 **Reset cart**. Focus stays on the activated button while the visible count and
 the off-screen status message update.
 
-## Verify the example
+## Verify the pair
 
-Run static analysis and the behavior tests once:
-
-```sh
-npm run lint
-npm run test:ci
-```
-
-Create the production bundle:
+Run the complete formatting, lint, behavior, tutorial-binding,
+teaching-history, and production-build gate:
 
 ```sh
-npm run build
+npm run check
 ```
 
 Run `npm run preview` to inspect the generated `dist` directory locally.
@@ -78,7 +73,7 @@ Record the exact browser, assistive technology, versions, and observed result.
 
 ## Dependency security status
 
-On 2026-08-11, the exact Vite 8.2.1 and Vitest 4.1.10 dependency closure
+On 2026-09-15, the exact Vite 8.2.1 and Vitest 4.1.11 dependency closure
 reported zero known vulnerabilities through npm audit. This replaces the
 retired Create React App dependency tree that previously reported 28 findings.
 Re-run the audit whenever the lockfile changes because registry advisories and
@@ -108,7 +103,7 @@ remote data, persistent browser storage, or background service.
 - Product copy, message deduplication, rapid-update policy, localization, and
   assistive-technology support must be verified in the real workflow.
 - Git history preserves the earlier React 18 and Create React App 5 checkpoint.
-  The current checkpoint uses Vite 8.2.1 and Vitest 4.1.10 while keeping the
+  The current checkpoint uses Vite 8.2.1 and Vitest 4.1.11 while keeping the
   application behavior and React version stable.
 - Vite 8 targets its current modern browser baseline by default. Confirm the
   production browser support policy before delivery and add a reviewed legacy
@@ -117,7 +112,7 @@ remote data, persistent browser storage, or background service.
 ## Sources
 
 - [WCAG 2.2, Success Criterion 4.1.3: Status Messages](https://www.w3.org/TR/WCAG22/#status-messages)
-- [W3C Technique ARIA22: Using `role=status`](https://www.w3.org/WAI/WCAG21/Techniques/aria/ARIA22)
+- [W3C Technique ARIA22: Using `role=status`](https://www.w3.org/WAI/WCAG22/Techniques/aria/ARIA22)
 - [MDN: `requestAnimationFrame`](https://developer.mozilla.org/docs/Web/API/Window/requestAnimationFrame)
 - [MDN: `cancelAnimationFrame`](https://developer.mozilla.org/docs/Web/API/Window/cancelAnimationFrame)
 - [React: Sunsetting Create React App](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)

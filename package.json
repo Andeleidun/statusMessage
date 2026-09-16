@@ -11,10 +11,12 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md package.json",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md package.json",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md pair.md design.md sources.md history.md verification.md package.json",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/**/*.mjs\" \"public/*.json\" eslint.config.js index.html vite.config.js README.md pair.md design.md sources.md history.md verification.md package.json",
     "test": "vitest",
-    "test:ci": "vitest run"
+    "test:ci": "vitest run",
+    "check": "npm run format:check && npm run lint && npm run test:ci && npm run verify:tutorial && npm run build",
+    "verify:tutorial": "node scripts/verifyTutorial.mjs"
   },
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
@@ -32,6 +34,6 @@
     "jsdom": "30.0.1",
     "prettier": "3.9.6",
     "vite": "8.2.1",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   }
 }
